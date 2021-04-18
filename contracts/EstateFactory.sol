@@ -4,7 +4,7 @@ import "openzeppelin-solidity/contracts/utils/cryptography/ECDSA.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./IFactoryERC721.sol";
 import "./Estate.sol";
-import "./EstateLootBox.sol";
+// import "./EstateLootBox.sol";
 import "./Strings.sol";
 
 contract EstateFactory is FactoryERC721, Ownable {
@@ -77,6 +77,10 @@ contract EstateFactory is FactoryERC721, Ownable {
 
     // XXX: TODO - check fee calculation
     function payFee(uint _topLeftLatitude, uint _topLeftLongitude, uint _bottomRightLatitude, _bottomRightLongitude) public returns (bool) {
+        // free for airdrops etc..
+        if (owner() == msg.sender)
+            return true;
+
         uint pixels = (_topLeftLatitude - _bottomRightLatitude) * (_bottomRightLongitude - _topLeftLongitude);
         require(msg.value >= fee * 10**18 * pixels);
 
