@@ -8,8 +8,7 @@ const vals = require('../lib/valuesCommon.js');
 
 /* Contracts in this test */
 
-const MockProxyRegistry = artifacts.require(
-  "../contracts/MockProxyRegistry.sol"
+const MockProxyRegistry = artifacts.require("../contracts/MockProxyRegistry.sol")
 const Estate = artifacts.require("../contracts/Estate.sol");
 const EstateFactory = artifacts.require("../contracts/EstateFactory.sol");
 const TestForReentrancyAttack = artifacts.require(
