@@ -10,14 +10,14 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 contract Estate is ERC721Tradable {
     constructor(address _proxyRegistryAddress)
         public
-        ERC721Tradable("Estate", "OSC", _proxyRegistryAddress)
+        ERC721Tradable("Estate", "BNFT", _proxyRegistryAddress)
     {}
 
     function baseTokenURI() public pure returns (string memory) {
-        return "https://creatures-api.opensea.io/api/creature/";
+        return "https://github.com/BillionNFTHomepage/www/";
     }
 
     function contractURI() public pure returns (string memory) {
-        return "https://creatures-api.opensea.io/contract/opensea-creatures";
+        return "https://github.com/BillionNFTHomepage/www";
     }
 }

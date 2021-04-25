@@ -1,5 +1,5 @@
 {
-  "name": "opensea-creatures",
+  "name": "BillionNFTHomepage",
   "version": "1.0.0",
   "description": "OpenSea's smart contracts, including ERC721 templates, factories, and the storefront builder.",
   "main": "index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ProjectOpenSea/opensea-creatures.git"
+    "url": "git+https://github.com/BilionNFTHomepage/ERC-721/ERC-721.git"
   },
-  "author": "support@opensea.io",
+  "author": "me@brian.biz",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ProjectOpenSea/opensea-creatures/issues"
+    "url": "https://github.com/BillionNFTHomepage/ERC-721/issues"
   },
-  "homepage": "https://github.com/ProjectOpenSea/opensea-creatures#readme",
+  "homepage": "https://github.com/BillionNFTHomepage/ERC-721#readme",
   "dependencies": {
     "@0x/subproviders": "^2.1.4",
     "eth-gas-reporter": "^0.2.17",
@@ -28,10 +28,6 @@
     "truffle-flattener": "^1.4.2",
     "truffle-hdwallet-provider": "1.0.5",
     "web3": "^1.0.0-beta.34"
-  },
-  "engines": {
-    "node": "12.18.x",
-    "yarn": "1.22.4"
   },
   "devDependencies": {
     "eslint": "^6.8.0"

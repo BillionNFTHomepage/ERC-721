@@ -10,13 +10,8 @@ const vals = require('../lib/valuesCommon.js');
 
 const MockProxyRegistry = artifacts.require(
   "../contracts/MockProxyRegistry.sol"
-);
-const LootBoxRandomness = artifacts.require(
-  "../contracts/LootBoxRandomness.sol"
-);
-const CreatureAccessory = artifacts.require("../contracts/CreatureAccessory.sol");
-const CreatureAccessoryFactory = artifacts.require("../contracts/CreatureAccessoryFactory.sol");
-const CreatureAccessoryLootBox = artifacts.require("../contracts/CreatureAccessoryLootBox.sol");
+const Estate = artifacts.require("../contracts/Estate.sol");
+const EstateFactory = artifacts.require("../contracts/EstateFactory.sol");
 const TestForReentrancyAttack = artifacts.require(
   "../contracts/TestForReentrancyAttack.sol"
 );
@@ -32,7 +27,7 @@ const toBN = web3.utils.toBN;
 const toTokenId = optionId => optionId;
 
 
-contract("CreatureAccessoryFactory", (accounts) => {
+contract("EstateFactory", (accounts) => {
   const TOTAL_OPTIONS = 9;
 
   const owner = accounts[0];
@@ -40,9 +35,8 @@ contract("CreatureAccessoryFactory", (accounts) => {
   const userB = accounts[2];
   const proxyForOwner = accounts[8];
 
-  let creatureAccessory;
+  let estate;
   let myFactory;
-  let myLootBox;
   let attacker;
   let proxy;
 
@@ -53,23 +47,16 @@ contract("CreatureAccessoryFactory", (accounts) => {
   before(async () => {
     proxy = await MockProxyRegistry.new();
     await proxy.setProxy(owner, proxyForOwner);
-    creatureAccessory = await CreatureAccessory.new(proxy.address);
-    CreatureAccessoryLootBox.link(LootBoxRandomness);
-    myLootBox = await CreatureAccessoryLootBox.new(
+    estate = await Estate.new(proxy.address);
+    myFactory = await EstateFactory.new(
       proxy.address,
-      { gas: 6721975 }
-    );
-    myFactory = await CreatureAccessoryFactory.new(
-      proxy.address,
-      creatureAccessory.address,
-      myLootBox.address
+      estate.address,
     );
     attacker = await TestForReentrancyAttack.new();
     await attacker.setFactoryAddress(myFactory.address);
     await setup.setupCreatureAccessories(
-      creatureAccessory,
+      estate,
       myFactory,
-      myLootBox,
       owner
     );
   });
@@ -79,7 +66,6 @@ contract("CreatureAccessoryFactory", (accounts) => {
   describe('#constructor()', () => {
     it('should set proxyRegistryAddress to the supplied value', async () => {
       assert.equal(await myFactory.proxyRegistryAddress(), proxy.address);
-      assert.equal(await myFactory.lootBoxAddress(), myLootBox.address);
     });
   });
 
@@ -87,14 +73,14 @@ contract("CreatureAccessoryFactory", (accounts) => {
     it('should return the correct name', async () => {
       assert.equal(
         await myFactory.name(),
-        'OpenSea Creature Accessory Pre-Sale'
+        'Estate Factory'
       );
     });
   });
 
   describe('#symbol()', () => {
     it('should return the correct symbol', async () => {
-      assert.equal(await myFactory.symbol(), 'OSCAP');
+      assert.equal(await myFactory.symbol(), 'BNFT');
     });
   });
 
@@ -106,13 +92,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
 
   describe('#factorySchemaName()', () => {
     it('should return the schema name', async () => {
-      assert.equal(await myFactory.factorySchemaName(), 'ERC1155');
-    });
-  });
-
-  describe('#numOptions()', () => {
-    it('should return the correct number of options', async () => {
-      assert.equal(await myFactory.numOptions(), TOTAL_OPTIONS);
+      assert.equal(await myFactory.factorySchemaName(), 'ERC721');
     });
   });
 
@@ -124,7 +104,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
       await truffleAssert.fails(
         myFactory.mint(vals.CLASS_COMMON, userA, 1000, "0x0", { from: userA }),
         truffleAssert.ErrorType.revert,
-        'CreatureAccessoryFactory#_mint: CANNOT_MINT_MORE'
+        'EstateFactory#_mint: CANNOT_MINT_MORE'
       );
     });
 
@@ -139,7 +119,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
       );
       // Check that the recipient got the correct quantity
       // Token numbers are one higher than option numbers
-      const balanceUserA = await creatureAccessory.balanceOf(
+      const balanceUserA = await estate.balanceOf(
         userA,
         toTokenId(vals.CLASS_COMMON)
       );
@@ -148,7 +128,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
       const balanceOf = await myFactory.balanceOf(owner, vals.CLASS_COMMON);
       assert.isOk(balanceOf.eq(toBN(vals.MINT_INITIAL_SUPPLY).sub(quantity)));
       // Check that total supply is correct
-      const premintedRemaining = await creatureAccessory.balanceOf(
+      const premintedRemaining = await estate.balanceOf(
         owner,
         toTokenId(vals.CLASS_COMMON)
       );
@@ -167,7 +147,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
         { from: proxyForOwner }
       );
       // Check that the recipient got the correct quantity
-      const balanceUserA = await creatureAccessory.balanceOf(
+      const balanceUserA = await estate.balanceOf(
         userA,
         toTokenId(vals.CLASS_COMMON)
       );
@@ -176,7 +156,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
       const balanceOf = await myFactory.balanceOf(owner, vals.CLASS_COMMON);
       assert.isOk(balanceOf.eq(toBN(vals.MINT_INITIAL_SUPPLY).sub(total)));
       // Check that total supply is correct
-      const premintedRemaining = await creatureAccessory.balanceOf(
+      const premintedRemaining = await estate.balanceOf(
         owner,
         toTokenId(vals.CLASS_COMMON)
       );
@@ -189,7 +169,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
    * environment, due to the OwnableDelegateProxy. To get around
    * this, in order to test this function below, you'll need to:
    *
-   * 1. go to CreatureAccessoryFactory.sol, and
+   * 1. go to EstateFactory.sol, and
    * 2. modify _isOwnerOrProxy
    *
    * --> Modification is:
@@ -207,7 +187,7 @@ contract("CreatureAccessoryFactory", (accounts) => {
        });
 
     // With unmodified code, this fails with:
-    //   CreatureAccessoryFactory#_mint: CANNOT_MINT_MORE
+    //   EstateFactory#_mint: CANNOT_MINT_MORE
     // which is the correct behavior (no reentrancy) for the wrong reason
     // (the attacker is not the owner or proxy).
 

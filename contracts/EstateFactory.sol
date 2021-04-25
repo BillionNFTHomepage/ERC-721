@@ -4,7 +4,6 @@ import "openzeppelin-solidity/contracts/utils/cryptography/ECDSA.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./IFactoryERC721.sol";
 import "./Estate.sol";
-// import "./EstateLootBox.sol";
 import "./Strings.sol";
 
 contract EstateFactory is FactoryERC721, Ownable {
@@ -19,33 +18,24 @@ contract EstateFactory is FactoryERC721, Ownable {
 
     address public proxyRegistryAddress;
     address public nftAddress;
-    address public lootBoxNftAddress;
     address public operatingAccount;
-    string public baseURI = "https://creatures-api.opensea.io/api/factory/";
+    string public baseURI = "https://github.com/BillionNFTHomepage/www/";
+    uint256 fee;
 
     /**
      * Enforce the existence of only 100 estates.
      */
-    uint256 ESTATE_SUPPLY = 100;
-
-    /**
-     * Three different options for minting Estates (basic, premium, and gold).
-     */
-    uint256 NUM_OPTIONS = 1;
+    uint256 ESTATE_SUPPLY = 1000000;
 
     constructor(address _proxyRegistryAddress, address _nftAddress, address _operatingAccount, uint _fee) public {
         proxyRegistryAddress = _proxyRegistryAddress;
         nftAddress = _nftAddress;
         operatingAccount = _operatingAccount;
         fee = _fee;
-        lootBoxNftAddress = address(
-            new EstateLootBox(_proxyRegistryAddress, address(this))
-        );
-
     }
 
     function name() external view returns (string memory) {
-        return "Estate Item Sale";
+        return "Estate Factory";
     }
 
     function symbol() external view returns (string memory) {
@@ -60,17 +50,17 @@ contract EstateFactory is FactoryERC721, Ownable {
         return NUM_OPTIONS;
     }
 
-    function transferOwnership(address newOwner) public onlyOwner {
-        address _prevOwner = owner();
-        super.transferOwnership(newOwner);
-        emit Transfer(_prevOwner, newOwner);
+    function transferOwnership(address _newOwner) public onlyOwner {
+        address prevOwner = owner();
+        super.transferOwnership(_newOwner);
+        emit Transfer(prevOwner, _newOwner);
     }
 
-    function changeOperatingAccount(uint operatingAccount) public onlyOwner {
+    function changeOperatingAccount(uint _operatingAccount) public onlyOwner {
         operatingAccount = _operatingAccount;
     }
 
-    function changeFee(uint fee) public onlyOwner {
+    function changeFee(uint _fee) public onlyOwner {
         fee = _fee;
     }
 
