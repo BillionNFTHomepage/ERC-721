@@ -1,174 +1,131 @@
-pragma solidity ^0.8.3;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/utils/cryptography/ECDSA.sol";
+import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./IFactoryERC721.sol";
 import "./Estate.sol";
 import "./Strings.sol";
 
 contract EstateFactory is FactoryERC721, Ownable {
-    using Strings for string;
-    using ECDSA for bytes32;
+    // using Strings for string;
+    // using ECDSA for bytes32;
 
-    event Transfer(
-        address indexed from,
-        address indexed to,
-        uint256 indexed tokenId
-    );
+    // event Transfer(
+    //     address indexed from,
+    //     address indexed to,
+    //     uint256 indexed tokenId
+    // );
 
-    address public proxyRegistryAddress;
-    address public nftAddress;
-    address public operatingAccount;
-    string public baseURI = "https://github.com/BillionNFTHomepage/www/";
-    uint256 fee;
+    // address public proxyRegistryAddress;
+    // address public nftAddress;
+    // address public operatingAccount;
+    // string public baseURI = "https://github.com/BillionNFTHomepage/www/";
+    // uint256 fee;
 
-    /**
-     * Enforce the existence of only 100 estates.
-     */
-    uint256 ESTATE_SUPPLY = 1000000;
+    // /**
+    //  * Enforce the existence of only 100 estates.
+    //  */
+    // uint256 ESTATE_SUPPLY = 1000000;
 
-    constructor(address _proxyRegistryAddress, address _nftAddress, address _operatingAccount, uint _fee) public {
-        proxyRegistryAddress = _proxyRegistryAddress;
-        nftAddress = _nftAddress;
-        operatingAccount = _operatingAccount;
-        fee = _fee;
-    }
+    // constructor(address _proxyRegistryAddress, address _nftAddress, address _operatingAccount, uint _fee) public {
+    //     proxyRegistryAddress = _proxyRegistryAddress;
+    //     nftAddress = _nftAddress;
+    //     operatingAccount = _operatingAccount;
+    //     fee = _fee;
+    // }
 
-    function name() external view returns (string memory) {
-        return "Estate Factory";
-    }
+    // function name() external view returns (string memory) {
+    //     return "Estate Factory";
+    // }
 
-    function symbol() external view returns (string memory) {
-        return "BNFT";
-    }
+    // function symbol() external view returns (string memory) {
+    //     return "BNFT";
+    // }
 
-    function supportsFactoryInterface() public view returns (bool) {
-        return true;
-    }
+    // function supportsFactoryInterface() public view returns (bool) {
+    //     return true;
+    // }
 
-    function numOptions() public view returns (uint256) {
-        return NUM_OPTIONS;
-    }
-
-    function transferOwnership(address _newOwner) public onlyOwner {
-        address prevOwner = owner();
-        super.transferOwnership(_newOwner);
-        emit Transfer(prevOwner, _newOwner);
-    }
-
-    function changeOperatingAccount(uint _operatingAccount) public onlyOwner {
-        operatingAccount = _operatingAccount;
-    }
-
-    function changeFee(uint _fee) public onlyOwner {
-        fee = _fee;
-    }
+    // function changeFee(uint _fee) public onlyOwner {
+    //     fee = _fee;
+    // }
 
 
-    // XXX: TODO - check fee calculation
-    function payFee(uint _topLeftLatitude, uint _topLeftLongitude, uint _bottomRightLatitude, _bottomRightLongitude) public returns (bool) {
-        // free for airdrops etc..
-        if (owner() == msg.sender)
-            return true;
+    // // XXX: TODO - check fee calculation
+    // // function payFee(uint _topLeftY, uint _topLeftX, uint _bottomRightY, uint _bottomRightX) public returns (bool) {
+    // //     // free for airdrops etc..
+    // //     if (owner() == msg.sender)
+    // //         return true;
 
-        uint pixels = (_topLeftLatitude - _bottomRightLatitude) * (_bottomRightLongitude - _topLeftLongitude);
-        require(msg.value >= fee * 10**18 * pixels);
+    // //     uint pixels = (_topLeftY - _bottomRightY) * (_bottomRightX - _topLeftX);
+    // //     require(msg.value >= fee * 10**18 * pixels);
 
-        operatingAccount.transfer(msg.value);
-        return true;
-    }
+    // //     operatingAccount.transfer(msg.value);
+    // //     return true;
+    // // }
 
-    function mint(uint256 _optionId, address _toAddress, bytes23 _signature, bytes32 _hashedMsg, 
-        uint _blockNo, uint _topLeftLatitude, uint _topLeftLongitude, uint _bottomRightLatitude, 
-        uint _bottomRightLongitude) public payable {
-        // make sure there a fee for minting
-        require(payFee(_topLeftLatitude, _topLeftLongitude, _bottomRightLatitude, _bottomRightLongitude));
+    // function mint(address _toAddress, bytes23 _signature, bytes32 _hashedMsg, 
+    //     uint _blockNo, uint _topLeftY, uint _topLeftX, uint _bottomRightY, 
+    //     uint _bottomRightX) public payable {
+    //     // make sure there a fee for minting
+    //     // require(payFee(_topLeftY, _topLeftX, _bottomRightY, _bottomRightX));
 
-        // Must be sent from the owner proxy or owner.
-        ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
-        assert(
-            address(proxyRegistry.proxies(owner())) == msg.sender ||
-                owner() == msg.sender 
-        );
-        require(canMint(_optionId, _signature, _hashedMsg, _topLeftLatitude, _topLeftLongitude,
-            _bottomRightLatitude, _bottomRightLongitude, _blockNo));
+    //     // Must be sent from the owner proxy or owner.
+    //     ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
+    //     assert(
+    //         address(proxyRegistry.proxies(owner())) == msg.sender ||
+    //             owner() == msg.sender 
+    //     );
 
-        Estate openSeaEstate = Estate(nftAddress);
-        if (_optionId == SINGLE_ESTATE_OPTION) {
-            openSeaEstate.mintTo(_toAddress);
-        } 
-    }
+    //     Estate estate = Estate(nftAddress);
+    //     estate.mintTo(_toAddress);
+    // }
 
-    function canMint(uint256 _optionId, bytes23 _signature, bytes32 _hashedMsg, uint _blockNo,
-        uint _topLeftLatitude, _topLeftLongitude, _bottomRightLatitude, _botomRightLongitude
-        ) public view returns (bool) {
-        // XXX: TODO - make sure that the signed block number isn't too far away from
-        // the curent block. Also check the signature. We want to make sure the current block is < 20 blocks
-        // ftrom when it was signed
-        require (block.number <= _blockNo + 20);
-        require (_hashedMsg = keccak256(abi.encodePacked(blockNo, _topLeftLatitude, _topLeftLongitude, 
-            _bottomRightLatitude, _bottomRightLongitude)));
-        require (operatingAccount == _signedHash.recover(_signature));
+    // function tokenURI() external view returns (string memory) {
+    //     return baseURI;
+    // }
 
-        if (_optionId >= NUM_OPTIONS) {
-            return false;
-        }
+    // /**
+    //  * Hack to get things to work automatically on estate.
+    //  * Use transferFrom so the frontend doesn't have to worry about different method names.
+    //  */
+    // function transferFrom(
+    //     address _from,
+    //     address _to,
+    //     uint256 _tokenId
+    // ) public {
+    //     // mint(_tokenId, _to);
+    // }
 
-        Estate openSeaEstate = Estate(nftAddress);
-        uint256 creatureSupply = openSeaEstate.totalSupply();
+    // /**
+    //  * Hack to get things to work automatically on estate.
+    //  * Use isApprovedForAll so the frontend doesn't have to worry about different method names.
+    //  */
+    // function isApprovedForAll(address _owner, address _operator)
+    //     public
+    //     view
+    //     returns (bool)
+    // {
+    //     if (owner() == _owner && _owner == _operator) {
+    //         return true;
+    //     }
 
-        uint256 numItemsAllocated = 0;
-        if (_optionId == SINGLE_ESTATE_OPTION) {
-            numItemsAllocated = 1;
-        } 
-        return creatureSupply < (ESTATE_SUPPLY - numItemsAllocated);
-    }
+    //     ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
+    //     if (
+    //         owner() == _owner &&
+    //         address(proxyRegistry.proxies(_owner)) == _operator
+    //     ) {
+    //         return true;
+    //     }
 
-    function tokenURI(uint256 _optionId) external view returns (string memory) {
-        return Strings.strConcat(baseURI, Strings.uint2str(_optionId));
-    }
+    //     return false;
+    // }
 
-    /**
-     * Hack to get things to work automatically on OpenSea.
-     * Use transferFrom so the frontend doesn't have to worry about different method names.
-     */
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 _tokenId
-    ) public {
-        mint(_tokenId, _to);
-    }
-
-    /**
-     * Hack to get things to work automatically on OpenSea.
-     * Use isApprovedForAll so the frontend doesn't have to worry about different method names.
-     */
-    function isApprovedForAll(address _owner, address _operator)
-        public
-        view
-        returns (bool)
-    {
-        if (owner() == _owner && _owner == _operator) {
-            return true;
-        }
-
-        ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
-        if (
-            owner() == _owner &&
-            address(proxyRegistry.proxies(_owner)) == _operator
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Hack to get things to work automatically on OpenSea.
-     * Use isApprovedForAll so the frontend doesn't have to worry about different method names.
-     */
-    function ownerOf(uint256 _tokenId) public view returns (address _owner) {
-        return owner();
-    }
+    // /**
+    //  * Hack to get things to work automatically on estate.
+    //  * Use isApprovedForAll so the frontend doesn't have to worry about different method names.
+    //  */
+    // function ownerOf(uint256 _tokenId) public view returns (address _owner) {
+    //     return owner();
+    // }
 }
