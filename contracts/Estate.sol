@@ -8,24 +8,25 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  * Estate - a contract for my non-fungible creatures.
  */
 contract Estate is ERC721Tradable {
-    constructor(address _proxyRegistryAddress)
+    constructor(address proxyRegistryAddress)
         public
-        ERC721Tradable("Estate", "BNFT", _proxyRegistryAddress)
+        ERC721Tradable("Estate", "BNFT", proxyRegistryAddress)
     {}
 
-    // function canMint(bytes23 _signature, bytes32 _signedHash, uint _blockNo, uint _topLeftY, uint _topLeftX, uint _bottomRightY, uint _bottomRightX) public view returns (bool) {
-        // require (block.number <= _blockNo + 20);
-        // require (_hashedMsg = keccak256(abi.encodePacked(_blockNo, _topLeftY, _topLeftX, 
-        //     _bottomRightY, _bottomRightX)));
-        // require (operatingAccount == _signedHash.recover(_signature));
+    function verify(bytes32 data, bytes32 signature) pure returns (bool) {
+        return keccack256(data)
+            .toEthSignedMessageHash()
+            .recover(signature) == owner;
+    }
 
-        // Estate estate = Estate(nftAddress);
-        // uint256 creatureSupply = estate.totalSupply();
+    function canMint(bytes32 signature, uint blockNo, uint32 topLeftY, uint32 topLeftX32, uint32 bottomRightY, uint32 bottomRightX) public view returns (bool) {
+        require (block.number <= blockNo + 20);
 
-        // uint256 numItemsAllocated = 0;
-        // return creatureSupply < (ESTATE_SUPPLY - 1);
-        // return true;
-    // }
+        data = keccak256(abi.encodePacked(msg.sender, blockNo, topLeftX, topLeftY, bottomRightX, bottomRightY));
+        return _verify(data, signature);
+
+        //XXX: todo - fees!
+    }
 
     function baseTokenURI() public pure returns (string memory) {
         return "https://github.com/BillionNFTHomepage/www/";
