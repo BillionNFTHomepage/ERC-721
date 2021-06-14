@@ -71,6 +71,84 @@
 				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"name": "DebugBytes",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "data",
+						"type": "bytes32"
+					}
+				],
+				"name": "DebugBytes32",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"name": "DebugSignature",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "addy",
+						"type": "address"
+					}
+				],
+				"name": "EmitAddress",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "length",
+						"type": "uint256"
+					}
+				],
+				"name": "Length",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "msg",
+						"type": "string"
+					}
+				],
+				"name": "Msg",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
 						"indexed": true,
 						"internalType": "address",
 						"name": "previousOwner",
@@ -84,6 +162,19 @@
 					}
 				],
 				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "RecoveredOwner",
 				"type": "event"
 			},
 			{
@@ -183,8 +274,13 @@
 				"type": "function"
 			},
 			{
-				"constant": true,
+				"constant": false,
 				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
 					{
 						"internalType": "bytes",
 						"name": "signature",
@@ -225,7 +321,7 @@
 					}
 				],
 				"payable": false,
-				"stateMutability": "view",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -760,10 +856,10 @@
 			]
 		},
 		"contracts/Estate.sol": {
-			"keccak256": "0x6a440b4952a891eb69fbcb7266edc78c8400842d35643bc094a181c4e2065c0a",
+			"keccak256": "0x35ba359cb7e0ffae7dcdfc0d6e34424e55fb06b6b895c86cb0b9d947d6244692",
 			"urls": [
-				"bzz-raw://0e23541c66e0b87cc34c433cb4f95d8b3f244896d2066bb5ff67aec8f3a3dc72",
-				"dweb:/ipfs/QmPW1cKLdz42WPfcQKH6ALkZmmBdBp4KneUPEqdvUaV64U"
+				"bzz-raw://668214371eb61db49e09b4d929b98dcadfa12b85e17b6b5001ec9d7284874808",
+				"dweb:/ipfs/QmWU71XmZNNsonoubZFBdEg6QD5SNYahx1ezJvXLwpG565"
 			]
 		},
 		"contracts/Strings.sol": {
