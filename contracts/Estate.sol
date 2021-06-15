@@ -9,24 +9,23 @@ import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
  * Estate - a contract for my non-fungible creatures.
  */
 contract Estate is Ownable, ERC721Tradable {
-    event DebugSignature(bytes data);
-    event DebugBytes(bytes data);
-    event DebugBytes32(bytes32 data);
-    event RecoveredOwner(address owner);
-    event EmitAddress(address addy);
-    event Length(uint length);
-    event Msg(string msg);
+    event EstateMinted(address to, uint blockNo, uint32 topLeftX, uint32 topLeftY, uint32 bottomRightX, uint32 bottomRightY);
     
     constructor(address proxyRegistryAddress)
         public
         ERC721Tradable("Estate", "BNFT", proxyRegistryAddress)
     {}
     
-    //function mintTo(address to, bytes memory signature, uint blockNo, uint32 topLeftX, uint32 topLeftY, uint32 bottomRightX, uint32 bottomRightY) public onlyOwner {
-    //    if (canMint(to, signature, blockNo, topLeftX, topLeftY, bottomRightX, bottomRightY)) {
-    //        super.mintTo(to);
-    //    }
-    //}
+    function mintTo(address to, bytes memory signature, uint blockNo, uint32 topLeftX, uint32 topLeftY, uint32 bottomRightX, uint32 bottomRightY) public onlyOwner (bool) {
+        if (!canMint(to, signature, blockNo, topLeftX, topLeftY, bottomRightX, bottomRightY)) {
+            return false;
+        }
+
+        super.mintTo(to);
+        emit EstateMinted(to, blockNo, topLeftX, topLeftY, bottomRightX, bottomRightY);
+
+        return true;
+    }
 
     using ECDSA for bytes32;
 
@@ -37,13 +36,7 @@ contract Estate is Ownable, ERC721Tradable {
         bytes32 convertedData;
         
         data = abi.encodePacked(to, blockNo, topLeftX, topLeftY, bottomRightX, bottomRightY);
-        emit DebugBytes(data);
         convertedData = keccak256(data);
-        emit DebugBytes32(convertedData);
-        convertedData = convertedData.toEthSignedMessageHash();
-        emit DebugBytes32(convertedData);
-        address recoveredOwner = convertedData.recover(signature);
-        emit RecoveredOwner(recoveredOwner);
 
         return recoveredOwner == owner();
 
