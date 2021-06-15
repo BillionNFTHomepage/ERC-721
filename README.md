@@ -7,6 +7,8 @@ npm install
 
 truffle unbox antony/svelte-box
 
+genache
+
 truffle compile
 truffle migrate
 ```
