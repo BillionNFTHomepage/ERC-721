@@ -3,6 +3,7 @@
 ```
 npm install -g truffle
 npm install -g genache-cli
+npm install
 
 truffle unbox antony/svelte-box
 
