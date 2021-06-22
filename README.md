@@ -8,7 +8,7 @@ npm install
 
 truffle unbox antony/svelte-box
 
-Rub Genache.app from your Applications folder
+Run Genache.app from your Applications folder
 
 truffle compile
 truffle migrate
