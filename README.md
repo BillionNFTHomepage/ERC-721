@@ -1,17 +1,19 @@
 ## Estate for BillionNFTHomepage
 
+Get Genache from here: https://www.trufflesuite.com/ganache
+
 ```
 npm install -g truffle
 npm install
 
 truffle unbox antony/svelte-box
 
-genache
+Rub Genache.app from your Applications folder
 
 truffle compile
 truffle migrate
 ```
 
-Also get genache from here: https://www.trufflesuite.com/ganache
+
 
 Note the contract address for the frontend
