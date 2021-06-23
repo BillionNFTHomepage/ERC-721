@@ -10,6 +10,8 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
  * Estate - a contract for my non-fungible creatures.
  */
 contract Estate is Ownable, ERC721Tradable {
+    using ECDSA for bytes32;
+
     event EstateMinted(address to, uint blockNo, uint32 topLeftX, uint32 topLeftY, uint32 bottomRightX, uint32 bottomRightY);
     
     constructor(address proxyRegistryAddress)
@@ -26,8 +28,6 @@ contract Estate is Ownable, ERC721Tradable {
 
         return true;
     }
-
-    using ECDSA for bytes32;
 
     function canMint(address to, bytes memory signature, uint blockNo, uint32 topLeftX, uint32 topLeftY, uint32 bottomRightX, uint32 bottomRightY) public view returns (bool) {
         //require (block.number <= blockNo + 20);
