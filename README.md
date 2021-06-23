@@ -3,17 +3,13 @@
 Get Genache from here: https://www.trufflesuite.com/ganache
 
 ```
-npm install -g truffle
 npm install
-
-truffle unbox antony/svelte-box
 
 Run Genache.app from your Applications folder
 
-truffle compile
-truffle migrate
+npx truffle compile
+npx truffle migrate
 ```
-
 
 
 Note the contract address for the frontend
