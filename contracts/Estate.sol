@@ -14,8 +14,8 @@ contract Estate is Ownable, ERC721Tradable {
 
     event EstateMinted(address to, uint blockNo, uint32 topLeftX, uint32 topLeftY, uint32 bottomRightX, uint32 bottomRightY);
     
-    constructor(address proxyRegistryAddress)
-        ERC721Tradable("Estate", "BNFT", proxyRegistryAddress)
+    constructor()
+        ERC721Tradable("Estate", "BNFT", msg.sender)
     {}
     
     function mintTo(address to, bytes memory signature, uint blockNo, uint32 topLeftX, uint32 topLeftY, uint32 bottomRightX, uint32 bottomRightY) public onlyOwner returns (bool) {
