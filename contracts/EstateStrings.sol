@@ -1,7 +1,7 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
 
-library Strings {
-  // via https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol
+library EstateStrings {
   function strConcat(string memory _a, string memory _b, string memory _c, string memory _d, string memory _e) internal pure returns (string memory) {
       bytes memory _ba = bytes(_a);
       bytes memory _bb = bytes(_b);
@@ -42,9 +42,12 @@ library Strings {
             j /= 10;
         }
         bytes memory bstr = new bytes(len);
-        uint k = len - 1;
+        uint k = len;
         while (_i != 0) {
-            bstr[k--] = byte(uint8(48 + _i % 10));
+            k = k-1;
+            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
             _i /= 10;
         }
         return string(bstr);

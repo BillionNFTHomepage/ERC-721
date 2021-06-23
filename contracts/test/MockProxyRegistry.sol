@@ -1,7 +1,8 @@
-pragma solidity ^0.5.12;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
 
 
-import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 
 /**
